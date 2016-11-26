@@ -10,6 +10,8 @@
 #include <object_msgs/ObjectInfoRequest.h>
 #include <object_msgs/ObjectInfoResponse.h>
 
+#include <motion_execution_msgs/SetObjectStatic.h>
+
 #include <shape_msgs/SolidPrimitive.h>
 #include <geometry_msgs/Pose.h>
 
@@ -30,15 +32,15 @@ namespace gazebo
  * ```
  * # Continuously publish info of gazebo objects?
  * publish_world_objects: true
- * 
+ *
  * # the topic onto which to publish object info of
  * # type object_msgs/Object
  * world_objects_topic: "/gazebo_objects"
- * 
+ *
  * # The topic onto which to publish the service
- * # which can be used to request object info    
+ * # which can be used to request object info
  * request_object_service: "/gazebo_objects/get_info"
- * 
+ *
  * # frame of the objects poses that will be published.
  * # Should usually be 'world'
  * objects_frame_id: "world"
@@ -48,7 +50,7 @@ namespace gazebo
  */
 class GazeboObjectInfo : public WorldPlugin
 {
-public: 
+public:
 	typedef object_msgs::Object ObjectMsg;
 	typedef object_msgs::ObjectInfo ObjectInfoMsg;
 
@@ -58,35 +60,39 @@ public:
 
 private:
 
-	bool requestObject(object_msgs::ObjectInfo::Request  &req, object_msgs::ObjectInfo::Response &res); 
-	
-	void advertEvent(const ros::TimerEvent& e); 
+	bool requestObject(object_msgs::ObjectInfo::Request  &req, object_msgs::ObjectInfo::Response &res);
+//	bool requestStatic(motion_execution_msgs::SetObjectStatic::Request  &req, motion_execution_msgs::SetObjectStatic::Response &res);
+	bool requestStatic(motion_execution_msgs::SetObjectStatic::Request  &req, motion_execution_msgs::SetObjectStatic::Response &res);
+
+	void advertEvent(const ros::TimerEvent& e);
 
 
 	//publishes a model made up of its bounding boxes
-	void onWorldUpdate(); 
+	void onWorldUpdate();
 
-	shape_msgs::SolidPrimitive * getSolidPrimitive(physics::CollisionPtr& c); 
+	shape_msgs::SolidPrimitive * getSolidPrimitive(physics::CollisionPtr& c);
+	shape_msgs::Mesh * getMesh(physics::CollisionPtr& c);
 
 	//returns a model made up of its bounding boxes
 	ObjectMsg createBoundingBoxObject(physics::ModelPtr& model, bool include_shape);
-	
+
 private:
 	//ros::NodeHandle node;
 	bool PUBLISH_OBJECTS;
 	std::string WORLD_OBJECTS_TOPIC;
 	std::string REQUEST_OBJECTS_TOPIC;
 	std::string ROOT_FRAME_ID;
-	
+
 	physics::WorldPtr world;
 
 	event::ConnectionPtr update_connection;
 	ros::Publisher object_pub;
 
 	ros::ServiceServer request_object_srv;
-	
+	ros::ServiceServer request_object_static;
+
 	ros::Timer publishTimer;
-			
+
 	std::vector<ObjectMsg> lastGeneratedObjects;
 	bool reGenerateObjects;
 };

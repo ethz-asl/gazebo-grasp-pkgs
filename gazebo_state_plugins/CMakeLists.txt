@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(
-  catkin 
+  catkin
   REQUIRED COMPONENTS
   gazebo_world_plugin_loader
   geometry_msgs
@@ -19,6 +19,7 @@ find_package(
   object_msgs
   object_msgs_tools
   eigen_conversions
+  motion_execution_msgs
 )
 
 find_package(gazebo REQUIRED)
@@ -42,6 +43,7 @@ catkin_package(
   LIBRARIES gazebo_state_plugins gazebo_map_publisher
   CATKIN_DEPENDS geometry_msgs roscpp shape_msgs std_msgs gazebo_world_plugin_loader
         gazebo_ros object_msgs object_msgs_tools eigen_conversions
+        motion_execution_msgs
 #  DEPENDS system_lib
 )
 
